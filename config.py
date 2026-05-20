@@ -1,0 +1,12 @@
+DATA_ROOT = '/kaggle/input/datasets/midzid/hmdb51/hmdb51_data'
+VAL_RATIO = 0.1
+SEED=42
+NUM_FRAMES=16
+FRAME_STRIDE=2
+IMG_SIZE=224
+BATCH_SIZE=4
+NUM_WORKERS=4
+EPOCHS = 20
+LEARNING_RATE = 1e-4
+WEIGHT_DECAY = 1e-5
+BEST_MODEL_PATH = 'tsm_resnet50_best.pt'
