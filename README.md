@@ -88,6 +88,8 @@ hmdb51_data/
 ```
 
 Nếu chạy local, hãy sửa `DATA_ROOT` trong `config.py` thành đường dẫn dataset trên máy của bạn.
+Nếu sử dụng Kaggle có thể Add Input dataset dùng để train tại URL: 
+`https://www.kaggle.com/datasets/midzid/hmdb51`
 
 ## Train Mô Hình
 
@@ -125,7 +127,7 @@ Notebook này chạy app Gradio để upload video và dự đoán hành động
 Trên Kaggle, notebook đang dùng các path:
 
 ```python
-/kaggle/working/CS231_Video_Action_Recognition
+/kaggle/working/Video_Action_Recognition
 /kaggle/input/models/midzid/tsm-resnet50-best/pytorch/default/1/tsm_resnet50_best.pt
 ```
 
@@ -158,12 +160,35 @@ Bạn có thể upload các video này trong app Gradio để kiểm tra nhanh.
 
 ## Lưu Ý
 
-- `final-app-2.ipynb` hiện là demo cho TSM ResNet50, chưa phải app đa mô hình hoàn chỉnh.
+- `final-app-2.ipynb` hiện là demo cho TSM ResNet50
 - Nếu muốn chạy notebook/app local, cần chỉnh các path Kaggle hardcode.
 - File `tsm_resnet50_best.pt` cần có cùng kiến trúc với `TSM_Network`.
 - Thứ tự `LABELS` trong app cần khớp với thứ tự class khi train.
 - Nếu gặp lỗi thiếu `torch`, cần cài PyTorch đúng phiên bản phù hợp với CUDA hoặc CPU.
 
-## Tác Giả
+## Cách sử dụng final-app-2.ipynb
+- Mở Kaggle Notebook hoặc Jupyter Notebook và upload/mở file `final-app-2.ipynb`.
+- Nếu chạy trên Kaggle, thêm model weight `tsm_resnet50_best.pt` vào phần **Input** của notebook. Sau đó kiểm tra biến `path_tsm` trong notebook có trỏ đúng tới file weight hay chưa.
+- Chạy cell đầu tiên để clone source code app từ GitHub:
 
-Project phục vụ môn **Nhập môn Thị giác Máy tính - CS231**.
+```bash
+rm -rf /kaggle/working/CS231_Video_Action_Recognition
+git -c credential.helper='' clone --depth 1 \
+  https://github.com/buidong941-ship-it/Human-Action-Recognition.git \
+  /kaggle/working/Video_Action_Recognition
+```
+
+- Chạy cell cài đặt thư viện để cài `gradio`, `decord`, `torchvision`.
+- Chạy cell import và load model. Nếu cell này báo lỗi đường dẫn, hãy kiểm tra lại:
+
+```python
+sys.path.append('/kaggle/working/Video_Action_Recognition')
+path_tsm = "/kaggle/input/models/midzid/tsm-resnet50-best/pytorch/default/1/tsm_resnet50_best.pt"
+```
+
+- Chạy các cell định nghĩa hàm `process_video_rgb`, `extract_frames_for_display`, `predict_tsm`.
+- Chạy cell tạo giao diện Gradio, sau đó chạy cell `demo.launch(...)`.
+- Khi Gradio hiện link public, mở link đó, upload video `.avi` hoặc `.mp4`, bấm **Preprocess** để xem 16 frame đầu vào, rồi bấm **Dự đoán bằng TSM** để xem nhãn hành động và độ tin cậy.
+- Có thể dùng các video mẫu trong thư mục `testing/` để kiểm tra nhanh.
+
+Nhận xét: notebook hiện phù hợp để demo inference TSM ResNet50 trên Kaggle. Điểm cần chú ý nhất là `path_tsm` phải đúng với vị trí weight trong Kaggle Input, và thư mục được thêm vào `sys.path` phải chứa file định nghĩa `TSM_Network`.
